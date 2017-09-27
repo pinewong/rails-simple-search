@@ -56,12 +56,23 @@ module RailsSimpleSearch
       name_hash = parse_field_name(field)
       field = name_hash[:field_name]
       operator = name_hash[:operator]
+      value_format = name_hash[:value_format]
 
       table = base_class.table_name
       key = "#{table}.#{field}"
   
       column = base_class.columns_hash[field.to_s]
       return nil unless column
+
+      case value_format
+      when :utc
+        # Process utc datetime
+        value = if value.is_a?(Array)
+                  value.map { |v| v&.in_time_zone&.utc rescue nil }
+                else
+                  value = value&.in_time_zone&.utc rescue nil
+                end
+      end
 
       if value.nil?
         verb = 'is'

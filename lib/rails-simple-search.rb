@@ -99,6 +99,11 @@ module RailsSimpleSearch
       else
         result[:field_name] = name
       end
+
+      if result[:field_name] =~ /^(.*)?(_utc)$/
+        result[:field_name] = $1
+        result[:value_format] = :utc
+      end
       result
     end
   
